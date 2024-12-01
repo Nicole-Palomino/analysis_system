@@ -1,11 +1,18 @@
 from fastapi import FastAPI
-from pydantic import BaseModel
-from sqlalchemy.orm import Session
-from app.db.database import get_db
+from app.models import users
+from app.db.database import create_db_and_tables
 
-import bcrypt
+app = FastAPI(
+    title="API de Análisis de Fútbol",
+    description="Registro, autenticación y manejo seguro de usuarios",
+    version="1.0.0"
+)
 
-app = FastAPI()
+app.include_router(users.router)
+
+@app.on_event("startup")
+def startup_event():
+    create_db_and_tables()
 
 @app.get("/")
 def read_root():
